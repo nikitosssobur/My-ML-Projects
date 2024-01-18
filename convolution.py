@@ -41,7 +41,7 @@ def conv_decorator(func):
         padding, pad_val = kwargs.get('padding', (0, 0)), kwargs.get('pad_val', 0)
         if len(np.shape(args[0])) == 3:
             if len(np.shape(args[1])) == 3:
-                #Case 1: 3-dimensional image and 3-dimensional kernel 
+                #Case 1: input: 3-dimensional image and 3-dimensional kernel, output: 2-dim feature map 
                 conv_dim1 = np.shape(args[0])[0] - np.shape(args[1])[0] + 2 * padding[0] + 1
                 conv_dim2 = np.shape(args[0])[1] - np.shape(args[1])[1] + 2 * padding[1] + 1 
                 general_conv = np.zeros((conv_dim1, conv_dim2))
@@ -51,14 +51,15 @@ def conv_decorator(func):
                 return general_conv
         
             elif len(np.shape(args[1])) == 2: 
-                #Case 2: 3-dimensional image / tensor (height, width, channels) and 2-dimensional kernel.
+                #Case 2: input: 3-dimensional image / tensor (height, width, channels) and 2-dimensional kernel
+                #output: three 2d feature maps  
                 conv_maps = []
                 for channel_num in iter(range(3)):
                     conv_maps.append(func(args[0][:, :, channel_num], args[1], padding, pad_val))
                 
                 return np.array(conv_maps) 
         
-        else: return func(args[0], args[1], padding, pad_val) #Case 3: 2-dimensional image and kernel
+        else: return func(args[0], args[1], padding, pad_val) #Case 3: input: 2-dimensional image and kernel, output: 2d feature map
     return wrapper
 
 
