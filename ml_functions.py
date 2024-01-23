@@ -6,7 +6,9 @@ import math
 ------------------------------ Activation functions --------------------------------
 '''
 
-def softmax(vector):    return np.exp(vector) / np.sum(vector)
+def softmax(vector): 
+    exp_vector = np.exp(vector)
+    return exp_vector / np.sum(exp_vector)
 
 
 def ReLU(x, deriv = False):
