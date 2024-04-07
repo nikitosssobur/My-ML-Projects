@@ -19,3 +19,8 @@ predictions = model(torch.unsqueeze(x_test, dim = 1)).squeeze(dim = 1).detach().
 plt.plot(x_test, y_test, x_test, predictions)
 plt.legend(['y(x)', 'model(x)'])
 plt.show()
+
+'''
+The result of approximation using this model is stored in the data folder as Func_approx.png file. 
+This code is just a demonstration of ability of the neural nets to approximate functions on small segments.   
+'''
