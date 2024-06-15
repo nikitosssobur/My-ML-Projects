@@ -74,6 +74,96 @@ class MultiLinearRegression:
     def get_var(self):
         if self.var is None: self.__var_estimation()
         return self.var
+
+
+class LogisticRegression:
+    '''
+    Binary classification logistic regression model
+    '''
+
+    def __init__(self, in_features):
+        self.in_features = in_features
+        self.weights = np.random.rand(in_features + 1)
+
+
+    def set_train_data(self, inputs, targets):
+        self.inputs = inputs  #matrix of vectors-objects x of size in_features from training sample
+        self.targets = targets #vector of answers (class label) for each input x 
+
+
+    def logit_func(self, arg):
+        return 1 / (1 + np.exp(-arg))
+
+
+    def train(self, lr, epoch_num):
+        self.lr = lr
+        for _ in range(epoch_num):
+            for xi, yi in zip(self.inputs, self.targets):
+                y_pred = self.__forward(xi, yi)    
+                self.__backward(np.concatenate(xi, [1]), yi, y_pred)
+
+
+    def __forward(self, x, true_output):
+        return self.logit_func(self.margin(x) * true_output)
+
+
+    def __backward(self, x, y_true, y_pred):
+        self.weights += self.lr * y_true * y_pred * x
+
+
+    def margin(self, x):
+        if len(x) == self.in_features:
+            return np.dot(self.weights, np.concatenate(x, [1]))
+    
+
+    def predict(self, x): 
+        return self.logit_func(self.margin(x))
+    
+
+    def predict_class(self, x, classes = [1, -1]):
+        return classes[0] if self.predict(x) > 0.5 else classes[1]
+
+
+
+class MultiClassLogisticRegression:
+    def __init__(self, features_num, classes_num):
+        self.features_num = features_num
+        self.classes_num = classes_num
+        self.weights = np.random.rand(self.classes_num, self.features_num + 1)
+        self.classes = np.arange(self.classes_num)
+
+
+    def set_train_data(self, inputs, targets):
+        self.inputs = inputs 
+        self.targets = targets
+
+
+    def softmax(self, vector_arg):
+        return np.exp(vector_arg) / np.sum(np.exp(vector_arg))
+
+    '''
+    def train(self, lr, epoch_num):
+        self.lr = lr
+        for _ in range(epoch_num):
+            for xi, yi in zip(self.inputs, self.targets):
+                y_pred = self.__forward(xi, yi)    
+                self.__backward(np.concatenate(xi, [1]), yi, y_pred)
+
+
+    def __forward(self, x, true_output):
+        return self.logit_func(self.margin(x) * true_output)
+
+
+    def __backward(self, x, y_true, y_pred):
+        self.weights += self.lr * y_true * y_pred * x
+    '''
+
+    def predict(self, x): 
+        return self.softmax(np.dot(self.weights, x))
+    
+
+    def predict_class(self, x):
+        return np.argmax(self.predict(x))
     
 
 
